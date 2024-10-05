@@ -9,6 +9,9 @@ const DefaultPage = () => {
         minHeight: "100vh",
         padding: "2rem",
         position: "relative",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <Outlet />
