@@ -6,14 +6,30 @@ import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const ListPostsPage = () => {
-  const { listPosts, result } = usePosts();
+  const { listPosts, result, isLoading } = usePosts();
   const navigate = useNavigate();
 
   useEffect(() => {
     listPosts();
   }, []);
 
-  return (
+  return isLoading ? (
+    <Box
+      sx={{
+        width: "100%",
+        minHeight: "calc(100vh - 4rem)",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        gap: "1rem",
+        backgroundColor: "#eeeded",
+      }}
+    >
+      <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>
+        Carregando ...
+      </Typography>
+    </Box>
+  ) : (
     <Box
       sx={{
         width: "100%",
