@@ -12,6 +12,7 @@ const DefaultPage = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#eeeded",
       }}
     >
       <Outlet />

@@ -6,12 +6,14 @@ import usePosts from "../hooks/api/Services/usePosts";
 import FileInputStyled from "../components/FileInputStyled";
 import { SnackBarContext } from "../contexts/SnackBarContext";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-const filesTypesPermissions = ["image", "audio", "video"];
+const filesTypesPermissions = [".png", ".jpeg", ".jpg", ".mp4", ".wav"];
 
 const CreatePostPage = () => {
   const { isLoading, createPost } = usePosts();
   const { setSnackBarMessage } = useContext(SnackBarContext);
+  const navigate = useNavigate();
 
   const createPostSchema = Yup.object().shape({
     name: Yup.string().required("Nome é necessário"),
@@ -29,7 +31,11 @@ const CreatePostPage = () => {
     validationSchema: createPostSchema,
     onSubmit: async (values, { resetForm }) => {
       if (values?.files?.length === 0) {
-        setSnackBarMessage("Arquivo é necessário", { variant: "error" });
+        setSnackBarMessage({
+          message: "Arquivo é necessário",
+          severity: "error",
+        });
+        return;
       }
 
       const formDatas = new FormData();
@@ -78,17 +84,37 @@ const CreatePostPage = () => {
       >
         <Box sx={{ width: "60%" }}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <Typography
                 sx={{
                   fontSize: "3rem",
                   fontWeight: "bold",
-                  textAlign: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
                 }}
               >
                 {" "}
                 POSTAGEM{" "}
               </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={6}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <LoadingButton
+                sx={{ width: "50%", fontSize: "1rem" }}
+                variant="contained"
+                loading={isLoading}
+                onClick={() => navigate("/list")}
+              >
+                Listagem
+              </LoadingButton>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -113,17 +139,17 @@ const CreatePostPage = () => {
                 file={values?.files}
                 onChange={(e) => {
                   if (
-                    e.some(
-                      (file) =>
-                        !filesTypesPermissions.includes(
-                          file?.type?.split("/")?.[0]
-                        )
-                    )
+                    e.some((file) => {
+                      return !filesTypesPermissions.some((ext) =>
+                        file?.name?.endsWith(ext)
+                      );
+                    })
                   ) {
-                    setSnackBarMessage(
-                      "Apenas imagens, videos e audios são permitidos.",
-                      { variant: "error" }
-                    );
+                    setSnackBarMessage({
+                      message:
+                        "Formato inválido! Extensões permitidas: .png, .jpeg, .jpg, .mp4, .wav",
+                      severity: "error",
+                    });
                     return;
                   }
 
@@ -132,8 +158,9 @@ const CreatePostPage = () => {
                   }, 0);
 
                   if (getFilesSize > 1024 * 1024 * 60) {
-                    setSnackBarMessage("O tamanho máximo permitido é de 60mb", {
-                      variant: "error",
+                    setSnackBarMessage({
+                      message: "O tamanho máximo permitido é de 60mb",
+                      severity: "error",
                     });
                     return;
                   }

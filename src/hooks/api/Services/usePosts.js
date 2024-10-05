@@ -44,9 +44,43 @@ export default function usePosts() {
     }
   };
 
+  const listPosts = async (datas) => {
+    setIsLoading(true);
+
+    try {
+      const response = await instance.get("/post/find");
+
+      if (!response?.data?.success) throw new Error();
+
+      setSnackBarMessage({
+        message: "Sucesso ao listar postagens",
+        severity: "success",
+      });
+
+      setResult(response?.data?.posts);
+
+      return {
+        success: true,
+        message: "Sucesso ao listar postagens",
+      };
+    } catch (error) {
+      setSnackBarMessage({
+        message: "Error ao listar postagens",
+        severity: "error",
+      });
+      return {
+        success: true,
+        message: "Error ao listar postagens",
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     result,
     isLoading,
     createPost,
+    listPosts,
   };
 }
