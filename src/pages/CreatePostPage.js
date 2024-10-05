@@ -4,13 +4,14 @@ import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup";
 import usePosts from "../hooks/api/Services/usePosts";
 import FileInputStyled from "../components/FileInputStyled";
-import { useSnackbar } from "notistack";
+import { SnackBarContext } from "../contexts/SnackBarContext";
+import { useContext } from "react";
 
 const filesTypesPermissions = ["image", "audio", "video"];
 
 const CreatePostPage = () => {
   const { isLoading, createPost } = usePosts();
-  const { enqueueSnackbar } = useSnackbar();
+  const { setSnackBarMessage } = useContext(SnackBarContext);
 
   const createPostSchema = Yup.object().shape({
     name: Yup.string().required("Nome é necessário"),
@@ -27,10 +28,8 @@ const CreatePostPage = () => {
     },
     validationSchema: createPostSchema,
     onSubmit: async (values, { resetForm }) => {
-      console.log("values", values);
-
       if (values?.files?.length === 0) {
-        return enqueueSnackbar("Arquivo é necessário", { variant: "error" });
+        setSnackBarMessage("Arquivo é necessário", { variant: "error" });
       }
 
       const formDatas = new FormData();
@@ -64,8 +63,6 @@ const CreatePostPage = () => {
     values,
     setFieldValue,
   } = formik;
-
-  console.log("values", values.files);
 
   return (
     <FormikProvider value={formik}>
@@ -123,10 +120,11 @@ const CreatePostPage = () => {
                         )
                     )
                   ) {
-                    return enqueueSnackbar(
+                    setSnackBarMessage(
                       "Apenas imagens, videos e audios são permitidos.",
                       { variant: "error" }
                     );
+                    return;
                   }
 
                   const getFilesSize = e.reduce((acc, file) => {
@@ -134,10 +132,10 @@ const CreatePostPage = () => {
                   }, 0);
 
                   if (getFilesSize > 1024 * 1024 * 60) {
-                    return enqueueSnackbar(
-                      "O tamanho máximo permitido é de 60mb",
-                      { variant: "error" }
-                    );
+                    setSnackBarMessage("O tamanho máximo permitido é de 60mb", {
+                      variant: "error",
+                    });
+                    return;
                   }
 
                   setFieldValue("files", e);

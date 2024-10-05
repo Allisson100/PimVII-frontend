@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import instance from "../../../common/axiosConfig";
-import { useSnackbar } from "notistack";
+import { SnackBarContext } from "../../../contexts/SnackBarContext";
 
 export default function usePosts() {
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const { setSnackBarMessage } = useContext(SnackBarContext);
 
   const createPost = async (datas) => {
     setIsLoading(true);
@@ -19,7 +19,10 @@ export default function usePosts() {
 
       if (!response?.data?.success) throw new Error();
 
-      enqueueSnackbar("Sucesso ao criar postagem", { variant: "success" });
+      setSnackBarMessage({
+        message: "Sucesso ao criar postagem",
+        severity: "success",
+      });
 
       setResult(response?.data);
 
@@ -28,7 +31,10 @@ export default function usePosts() {
         message: "Sucesso ao criar postagem",
       };
     } catch (error) {
-      enqueueSnackbar("Error ao criar postagem", { variant: "success" });
+      setSnackBarMessage({
+        message: "Error ao criar postagem",
+        severity: "error",
+      });
       return {
         success: true,
         message: "Error ao criar postagem",
