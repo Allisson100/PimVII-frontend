@@ -92,51 +92,6 @@ const MidiaSlider = ({ fileArray, fileHeight = 255, fileWidth = 400 }) => {
               );
             })}
         </AutoPlaySwipeableViews>
-        <MobileStepper
-          steps={maxSteps}
-          //   position="static"
-          activeStep={fileArray?.length > 1 ? activeStep : null}
-          nextButton={
-            fileArray?.length > 1 && (
-              <Button
-                size="small"
-                onClick={handleNext}
-                disabled={activeStep === maxSteps - 1}
-              >
-                Próximo
-                {theme.direction === "rtl" ? (
-                  <Icon
-                    icon="weui:arrow-filled"
-                    width={10}
-                    style={{ transform: "rotate(180deg)" }}
-                  />
-                ) : (
-                  <Icon icon="weui:arrow-filled" width={10} />
-                )}
-              </Button>
-            )
-          }
-          backButton={
-            fileArray?.length > 1 && (
-              <Button
-                size="small"
-                onClick={handleBack}
-                disabled={activeStep === 0}
-              >
-                {theme.direction === "rtl" ? (
-                  <Icon icon="weui:arrow-filled" width={10} />
-                ) : (
-                  <Icon
-                    icon="weui:arrow-filled"
-                    width={10}
-                    style={{ transform: "rotate(180deg)" }}
-                  />
-                )}
-                Voltar
-              </Button>
-            )
-          }
-        />
       </Box>
     </Box>
   );
